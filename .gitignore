@@ -1,0 +1,21 @@
+# React / Node.js
+node_modules/
+build/
+dist/
+.env
+.env.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# .NET
+bin/
+obj/
+.vs/
+*.user
+*.userosscache
+*.suo
+*.dbmdl
+*.jfm
+packages/
+TestResults/
