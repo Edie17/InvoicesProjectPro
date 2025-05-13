@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { apiGet } from "./utils/api";
 import { Link } from "react-router-dom";
 
+/**
+ * Component that displays dashboard statistics about invoices and persons.
+ * Serves as the home page of the application.
+ */
 const Statistics = () => {
   const [invoiceStats, setInvoiceStats] = useState({
     currentYearSum: 0,
@@ -16,7 +20,7 @@ const Statistics = () => {
     setLoading(true);
     setError(null);
 
-    // Načtení dat z oficiálních endpointů podle dokumentace
+    // Load data from official endpoints according to documentation
     Promise.all([
       apiGet("/api/invoices/statistics"),
       apiGet("/api/persons/statistics")
@@ -25,14 +29,14 @@ const Statistics = () => {
         console.log("Statistiky faktur:", invoiceData);
         console.log("Statistiky osob:", personData);
         
-        // Nastavení dat faktur podle formátu z dokumentace
+        // Set invoice data according to format from documentation
         setInvoiceStats({
           currentYearSum: invoiceData.currentYearSum || 0,
           allTimeSum: invoiceData.allTimeSum || 0,
           invoicesCount: invoiceData.invoicesCount || 0
         });
         
-        // Nastavení dat osob
+        // Set person data
         setPersonStats(Array.isArray(personData) ? personData : []);
         setLoading(false);
       })
@@ -43,7 +47,9 @@ const Statistics = () => {
       });
   }, []);
 
-  // Pomocná funkce pro formátování čísel
+  /**
+   * Helper function for formatting numbers with thousand separators.
+   */
   const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };

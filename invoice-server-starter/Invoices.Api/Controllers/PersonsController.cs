@@ -27,20 +27,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Invoices.Api.Controllers;
 
+/// <summary>
+/// API controller for managing persons in the system.
+/// </summary>
 [Route("api")]
 [ApiController]
 public class PersonsController : ControllerBase
 {
     private readonly IPersonManager personManager;
-    private readonly IInvoiceManager invoiceManager; // Přidat tuto instanci
+    private readonly IInvoiceManager invoiceManager;
 
-    // Upravit konstruktor pro přijetí obou závislostí
     public PersonsController(IPersonManager personManager, IInvoiceManager invoiceManager)
     {
         this.personManager = personManager;
-        this.invoiceManager = invoiceManager; // Přiřadit injektovanou instanci
+        this.invoiceManager = invoiceManager;
     }
-
 
     [HttpGet("persons")]
     public IEnumerable<PersonDto> GetPersons()
@@ -48,6 +49,10 @@ public class PersonsController : ControllerBase
         return personManager.GetAllPersons();
     }
 
+    /// <summary>
+    /// Gets a specific person by ID.
+    /// </summary>
+    /// <returns>The person or 404 if not found</returns>
     [HttpGet("persons/{personId}")]
     public IActionResult GetPerson(ulong personId)
     {
@@ -59,6 +64,10 @@ public class PersonsController : ControllerBase
         return Ok(person);
     }
 
+    /// <summary>
+    /// Creates a new person.
+    /// </summary>
+    /// <returns>201 Created response with the created person</returns>
     [HttpPost("persons")]
     public IActionResult AddPerson([FromBody] PersonDto personDto)
     {
@@ -73,33 +82,40 @@ public class PersonsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Updates an existing person.
+    /// </summary>
+    /// <returns>The updated person or 404 if not found</returns>
     [HttpPut("persons/{id}")]
     public IActionResult UpdatePerson(ulong id, [FromBody] PersonDto personDto)
     {
-            PersonDto? updatedPerson = personManager.UpdatePerson(id, personDto);
-            if (updatedPerson == null)
-            {
-                return NotFound(); 
-            }
-            return Ok(updatedPerson);
+        PersonDto? updatedPerson = personManager.UpdatePerson(id, personDto);
+        if (updatedPerson == null)
+        {
+            return NotFound();
+        }
+        return Ok(updatedPerson);
     }
 
+    /// <summary>
+    /// Gets statistical data about persons and their revenues.
+    /// </summary>
     [HttpGet("persons/statistics")]
     public IActionResult GetPersonsStatistics()
     {
-        // Získat všechny osoby
+        // Get all persons
         var persons = personManager.GetAllPersons();
 
-        // Výsledný seznam pro statistiky osob
+        // Result list for person statistics
         var personsStatistics = new List<object>();
 
-        // Pro každou osobu získat statistiky
+        // For each person, get their statistics
         foreach (var person in persons)
         {
-            // Získat statistiky pro danou osobu
+            // Get statistics for the current person
             var statistics = invoiceManager.GetPersonStatistics(person.PersonId);
 
-            // Přidat do výsledku ve formátu dle dokumentace
+            // Add to the result in the format specified in documentation
             personsStatistics.Add(new
             {
                 personId = person.PersonId,

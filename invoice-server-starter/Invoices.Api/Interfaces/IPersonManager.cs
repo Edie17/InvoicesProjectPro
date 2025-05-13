@@ -24,12 +24,24 @@ using Invoices.Api.Models;
 
 namespace Invoices.Api.Interfaces;
 
+/// <summary>
+/// Service interface for person management operations.
+/// </summary>
 public interface IPersonManager
 {
     IList<PersonDto> GetAllPersons();
     PersonDto AddPerson(PersonDto personDto);
     void DeletePerson(uint personId);
 
+    /// <summary>
+    /// Gets a person by ID.
+    /// </summary>
+    /// <returns>The person or null if not found</returns>
     PersonDto? GetPerson(ulong personId);
+
+    /// <summary>
+    /// Updates an existing person.
+    /// </summary>
+    /// <returns>The updated person or null if not found</returns>
     PersonDto? UpdatePerson(ulong id, PersonDto personDto);
 }

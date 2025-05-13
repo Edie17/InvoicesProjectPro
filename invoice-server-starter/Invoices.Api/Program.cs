@@ -1,4 +1,4 @@
- /*  _____ _______         _                      _
+/*  _____ _______         _                      _
  * |_   _|__   __|       | |                    | |
  *   | |    | |_ __   ___| |___      _____  _ __| | __  ___ ____
  *   | |    | | '_ \ / _ \ __\ \ /\ / / _ \| '__| |/ / / __|_  /
@@ -31,18 +31,25 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
+/// <summary>
+/// Main entry point for the application that configures services and middleware.
+/// </summary>
 var builder = WebApplication.CreateBuilder(args);
 
+// Get database connection string from configuration
 var connectionString = builder.Configuration.GetConnectionString("LocalInvoicesConnection");
 
+// Configure Entity Framework
 builder.Services.AddDbContext<InvoicesDbContext>(options =>
     options.UseSqlServer(connectionString)
         .UseLazyLoadingProxies()
         .ConfigureWarnings(x => x.Ignore(CoreEventId.LazyLoadOnDisposedContextWarning)));
 
+// Configure JSON serialization for enum values
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
+// Configure API documentation with Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("invoices", new OpenApiInfo
@@ -51,17 +58,21 @@ builder.Services.AddSwaggerGen(options =>
         Title = "Invoices"
     }));
 
+// Register repositories
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
+// Register managers
 builder.Services.AddScoped<IPersonManager, PersonManager>();
 builder.Services.AddScoped<IInvoiceManager, InvoiceManager>();
 
-
+// Register AutoMapper
 builder.Services.AddAutoMapper(typeof(AutomapperConfigurationProfile));
 
+// Build the application
 var app = builder.Build();
 
+// Configure middleware pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

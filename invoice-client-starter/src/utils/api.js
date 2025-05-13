@@ -20,9 +20,18 @@
  * Více informací na http://www.itnetwork.cz/licence
  */
 
-
+/**
+ * Base API URL prefix
+ */
 const API_URL = "/api";
 
+/**
+ * Utility function for making API requests with proper error handling.
+ * 
+ * @param {string} url - API endpoint URL
+ * @param {Object} requestOptions - Fetch request options
+ * @returns {Promise} - Promise that resolves with the response data
+ */
 const fetchData = (url, requestOptions) => {
     const apiUrl = `${API_URL}${url}`;
 
@@ -40,6 +49,13 @@ const fetchData = (url, requestOptions) => {
         });
 };
 
+/**
+ * Performs a GET request to the API.
+ * 
+ * @param {string} url - API endpoint URL
+ * @param {Object} params - URL query parameters
+ * @returns {Promise} - Promise that resolves with the response data
+ */
 export const apiGet = (url, params) => {
     const filteredParams = Object.fromEntries(
         Object.entries(params || {}).filter(([_, value]) => value != null)
@@ -53,6 +69,13 @@ export const apiGet = (url, params) => {
     return fetchData(apiUrl, requestOptions);
 };
 
+/**
+ * Performs a POST request to the API.
+ * 
+ * @param {string} url - API endpoint URL
+ * @param {Object} data - Data to send in the request body
+ * @returns {Promise} - Promise that resolves with the response data
+ */
 export const apiPost = (url, data) => {
     const requestOptions = {
         method: "POST",
@@ -63,6 +86,13 @@ export const apiPost = (url, data) => {
     return fetchData(url, requestOptions);
 };
 
+/**
+ * Performs a PUT request to the API.
+ * 
+ * @param {string} url - API endpoint URL
+ * @param {Object} data - Data to send in the request body
+ * @returns {Promise} - Promise that resolves with the response data
+ */
 export const apiPut = (url, data) => {
     const requestOptions = {
         method: "PUT",
@@ -73,6 +103,12 @@ export const apiPut = (url, data) => {
     return fetchData(url, requestOptions);
 };
 
+/**
+ * Performs a DELETE request to the API.
+ * 
+ * @param {string} url - API endpoint URL
+ * @returns {Promise} - Promise that resolves when the delete is complete
+ */
 export const apiDelete = (url) => {
     const requestOptions = {
         method: "DELETE",

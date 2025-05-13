@@ -1,10 +1,24 @@
 import React from "react";
 
+/**
+ * Component for text, number, date input elements and textareas.
+ * 
+ * @param {Object} props - Component properties
+ * @param {string} props.type - Input type ("text", "number", "date", "textarea")
+ * @param {string} props.name - Input name attribute
+ * @param {string} props.value - Input value
+ * @param {string} props.label - Label text for the input
+ * @param {string} props.prompt - Placeholder text
+ * @param {boolean} props.required - Whether the input is required
+ * @param {number} props.min - Minimum value (for number/date) or minimum length (for text/textarea)
+ * @param {number} props.rows - Number of rows for textarea
+ * @param {Function} props.handleChange - Change event handler
+ */
 export function InputField(props) {
-  // podporované typy pro element input
+  // Supported input types
   const INPUTS = ["text", "number", "date"];
 
-  // validace elementu a typu
+  // Element and type validation
   const type = props.type.toLowerCase();
   const isTextarea = type === "textarea";
   const required = props.required || false;
@@ -13,7 +27,7 @@ export function InputField(props) {
     return null;
   }
 
-  // přiřazení hodnoty minima do atributu příslušného typu
+  // Assign minimum value to the appropriate attribute based on type
   const minProp = props.min || null;
   const min = ["number", "date"].includes(type) ? minProp : null;
   const minlength = ["text", "textarea"].includes(type) ? minProp : null;
@@ -22,7 +36,7 @@ export function InputField(props) {
     <div className="form-group">
       <label>{props.label}:</label>
 
-      {/* vykreslení aktuálního elementu */}
+      {/* Render the appropriate element */}
       {isTextarea ? (
         <textarea
           required={required}

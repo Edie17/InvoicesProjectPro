@@ -1,8 +1,19 @@
+/**
+ * Component for checkbox and radio input elements.
+ * 
+ * @param {Object} props - Component properties
+ * @param {string} props.type - Input type ("checkbox" or "radio")
+ * @param {string} props.name - Input name attribute
+ * @param {string} props.value - Input value
+ * @param {boolean} props.checked - Whether the input is checked
+ * @param {string} props.label - Label text for the input
+ * @param {Function} props.handleChange - Change event handler
+ */
 export function InputCheck(props) {
-  // podporované typy pro element input
+  // Supported input types
   const INPUTS = ["checkbox", "radio"];
 
-  // validace typu
+  // Type validation
   const type = props.type.toLowerCase();
   const checked = props.checked || "";
 
@@ -13,7 +24,7 @@ export function InputCheck(props) {
   return (
     <div className="form-group form-check">
       <label className="form-check-label">
-        {/* vykreslení s aktuálním typem */}
+        {/* Render with current type */}
         <input
           type={props.type}
           className="form-check-input"

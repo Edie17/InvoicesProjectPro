@@ -10,6 +10,9 @@ using System;
 
 namespace Invoices.Api.Managers
 {
+    /// <summary>
+    /// Implementation of invoice management operations.
+    /// </summary>
     public class InvoiceManager : IInvoiceManager
     {
         private readonly IInvoiceRepository invoiceRepository;
@@ -23,7 +26,6 @@ namespace Invoices.Api.Managers
             this.personRepository = personRepository;
             this.mapper = mapper;
             this.invoicesDbContext = invoicesDbContext;
-
         }
 
         public InvoiceDto AddInvoice(InvoiceDto invoiceDto)
@@ -35,8 +37,8 @@ namespace Invoices.Api.Managers
             invoice.Seller = null;
             Invoice addedInvoice = invoiceRepository.Insert(invoice);
 
-            if (invoice.BuyerId is not null) 
-             invoice.Buyer = personRepository.FindById((ulong)invoice.BuyerId);
+            if (invoice.BuyerId is not null)
+                invoice.Buyer = personRepository.FindById((ulong)invoice.BuyerId);
             if (invoice.SellerId is not null)
                 invoice.Seller = personRepository.FindById((ulong)invoice.SellerId);
 
@@ -49,7 +51,6 @@ namespace Invoices.Api.Managers
         {
             IList<Invoice> invoice = invoiceRepository.GetAll();
             return mapper.Map<IList<InvoiceDto>>(invoice);
-
         }
 
         public InvoiceDto? GetInvoice(ulong id)
@@ -64,23 +65,23 @@ namespace Invoices.Api.Managers
             if (existingInvoice == null)
                 return null;
 
-            // Odpojíme existující entitu z kontextu
+            // Detach existing entity from context
             invoicesDbContext.Entry(existingInvoice).State = EntityState.Detached;
 
-            // Vytvoříme novou entitu s aktualizovanými daty
+            // Create new entity with updated data
             Invoice invoice = mapper.Map<Invoice>(invoiceDto);
             invoice.InvoiceId = id;
 
-            // Nastavíme vazby na Buyer/Seller
+            // Set Buyer/Seller relations
             invoice.BuyerId = invoiceDto.Buyer?.PersonId;
             invoice.SellerId = invoiceDto.Seller?.PersonId;
             invoice.Buyer = null;
             invoice.Seller = null;
 
-            // Aktualizujeme
+            // Update
             Invoice updatedInvoice = invoiceRepository.Update(invoice);
 
-            // Načteme čerstvá data o kupujícím a prodávajícím
+            // Load fresh data about buyer and seller
             if (updatedInvoice.BuyerId.HasValue)
                 updatedInvoice.Buyer = personRepository.FindById((ulong)updatedInvoice.BuyerId);
             if (updatedInvoice.SellerId.HasValue)
@@ -89,33 +90,39 @@ namespace Invoices.Api.Managers
             return mapper.Map<InvoiceDto>(updatedInvoice);
         }
 
+        /// <summary>
+        /// Gets sales invoices where the person with the given identification number is the seller.
+        /// </summary>
         public IEnumerable<InvoiceDto> GetSalesByIdentificationNumber(string identificationNumber)
         {
-            // Najdeme všechny verze osoby se stejným IČO
+            // Find all versions of the person with the same identification number
             var persons = personRepository.GetAll()
                 .Where(p => p.IdentificationNumber == identificationNumber)
                 .Select(p => p.PersonId);
 
-            // Najdeme všechny faktury, kde jsou tyto osoby jako prodejci
+            // Find all invoices where these persons are sellers
             var invoices = invoiceRepository.GetAll()
                 .Where(i => i.SellerId.HasValue && persons.Contains((ulong)i.SellerId));
 
-            // Mapujeme na DTO
+            // Map to DTOs
             return mapper.Map<IEnumerable<InvoiceDto>>(invoices);
         }
 
+        /// <summary>
+        /// Gets purchase invoices where the person with the given identification number is the buyer.
+        /// </summary>
         public IEnumerable<InvoiceDto> GetPurchasesByIdentificationNumber(string identificationNumber)
         {
-            // Najdeme všechny verze osoby se stejným IČO
+            // Find all versions of the person with the same identification number
             var persons = personRepository.GetAll()
                 .Where(p => p.IdentificationNumber == identificationNumber)
                 .Select(p => p.PersonId);
 
-            // Najdeme všechny faktury, kde jsou tyto osoby jako kupující
+            // Find all invoices where these persons are buyers
             var invoices = invoiceRepository.GetAll()
                 .Where(i => i.BuyerId.HasValue && persons.Contains((ulong)i.BuyerId));
 
-            // Mapujeme na DTO
+            // Map to DTOs
             return mapper.Map<IEnumerable<InvoiceDto>>(invoices);
         }
 
@@ -136,6 +143,9 @@ namespace Invoices.Api.Managers
             return mapper.Map<IEnumerable<InvoiceDto>>(personInvoices);
         }
 
+        /// <summary>
+        /// Gets overall invoice statistics.
+        /// </summary>
         public StatisticsDto GetStatistics()
         {
             var allInvoices = invoiceRepository.GetAll();
@@ -159,7 +169,7 @@ namespace Invoices.Api.Managers
 
             var allInvoices = invoiceRepository.GetAll();
 
-            // Faktury kde je osoba jako prodejce nebo kupující
+            // Invoices where person is seller or buyer
             var personInvoices = allInvoices.Where(i => i.SellerId == personId || i.BuyerId == personId);
 
             return new PersonStatisticsDto

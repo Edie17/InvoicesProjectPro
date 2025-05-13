@@ -23,6 +23,14 @@
 import React from "react";
 import {Link} from "react-router-dom";
 
+/**
+ * Component for displaying persons in a table format.
+ * 
+ * @param {Object} props - Component properties
+ * @param {string} props.label - Label to display before the count of items
+ * @param {Array} props.items - Array of person objects to display
+ * @param {Function} props.deletePerson - Function to call when deleting a person
+ */
 const PersonTable = ({label, items, deletePerson}) => {
     return (
         <div>

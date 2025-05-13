@@ -3,9 +3,18 @@ import { Link } from "react-router-dom";
 import { apiDelete, apiGet } from "../utils/api";
 import InvoiceTable from "./InvoiceTable";
 
+/**
+ * Component for displaying a list of all invoices.
+ * Provides functionality to view, edit, and delete invoices.
+ */
 const InvoiceIndex = () => {
     const [invoices, setInvoices] = useState([]);
 
+    /**
+     * Deletes an invoice by its ID.
+     * 
+     * @param {string} id - The ID of the invoice to delete
+     */
     const deleteInvoice = async (id) => {
         try {
             await apiDelete("/api/invoices/" + id);

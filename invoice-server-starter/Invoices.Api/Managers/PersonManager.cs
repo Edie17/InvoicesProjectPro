@@ -28,18 +28,19 @@ using Invoices.Data.Models;
 
 namespace Invoices.Api.Managers;
 
+/// <summary>
+/// Implementation of person management operations.
+/// </summary>
 public class PersonManager : IPersonManager
 {
     private readonly IPersonRepository personRepository;
     private readonly IMapper mapper;
-
 
     public PersonManager(IPersonRepository personRepository, IMapper mapper)
     {
         this.personRepository = personRepository;
         this.mapper = mapper;
     }
-
 
     public IList<PersonDto> GetAllPersons()
     {
@@ -71,6 +72,10 @@ public class PersonManager : IPersonManager
         HidePerson(personId);
     }
 
+    /// <summary>
+    /// Hides a person rather than deleting it to maintain referential integrity.
+    /// </summary>
+    /// <returns>The hidden person or null if not found</returns>
     private Person? HidePerson(uint personId)
     {
         Person? person = personRepository.FindById(personId);
@@ -82,32 +87,35 @@ public class PersonManager : IPersonManager
         return personRepository.Update(person);
     }
 
+    /// <summary>
+    /// Updates a person by creating a new version with the updated data and hiding the old one.
+    /// This approach preserves history of changes.
+    /// </summary>
     public PersonDto? UpdatePerson(ulong id, PersonDto personDto)
     {
-        // Najdi existující osobu podle ID
+        // Find existing person by ID
         Person? existingPerson = personRepository.Select(id);
         if (existingPerson == null)
         {
-            return null; // Osoba nenalezena, vrať null
+            return null; // Person not found
         }
 
-        // Zkontroluj, zda se IČ v personDto liší od IČ existující osoby
+        // Check if identification number in personDto is different from existing person
         if (existingPerson.IdentificationNumber != personDto.IdentificationNumber)
         {
-            throw new InvalidOperationException("Nelze změnit IČ existující osoby.");
+            throw new InvalidOperationException("Cannot change identification number of an existing person.");
         }
 
-        // Skryj existující osobu
+        // Hide existing person
         existingPerson.Hidden = true;
         personRepository.Update(existingPerson);
 
-        // Vytvoř novou osobu s upravenými hodnotami
+        // Create new person with updated values
         Person newPerson = mapper.Map<Person>(personDto);
-        // Nastav ID na 0, aby se vygenerovalo nové ID
+        // Set ID to 0 to generate a new ID
         newPerson.PersonId = 0;
         Person addedPerson = personRepository.Insert(newPerson);
 
         return mapper.Map<PersonDto>(addedPerson);
     }
-
 }

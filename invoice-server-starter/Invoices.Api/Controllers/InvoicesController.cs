@@ -5,22 +5,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Invoices.Api.Controllers
 {
-
+    /// <summary>
+    /// API controller for managing invoices in the system.
+    /// </summary>
     [Route("api")]
     [ApiController]
-
     public class InvoicesController : ControllerBase
     {
         private readonly IInvoiceManager invoiceManager;
-
 
         public InvoicesController(IInvoiceManager invoiceManager)
         {
             this.invoiceManager = invoiceManager;
         }
 
-
-
+        /// <summary>
+        /// Creates a new invoice.
+        /// </summary>
+        /// <returns>201 Created response with the created invoice</returns>
         [HttpPost("invoices")]
         public IActionResult AddInvoice([FromBody] InvoiceDto invoiceDto)
         {
@@ -34,6 +36,10 @@ namespace Invoices.Api.Controllers
             return invoiceManager.GetAllInvoices();
         }
 
+        /// <summary>
+        /// Gets a specific invoice by ID.
+        /// </summary>
+        /// <returns>The invoice or 404 if not found</returns>
         [HttpGet("invoices/{id}")]
         public IActionResult GetInvoice(ulong id)
         {
@@ -44,6 +50,10 @@ namespace Invoices.Api.Controllers
             return Ok(invoice);
         }
 
+        /// <summary>
+        /// Updates an existing invoice.
+        /// </summary>
+        /// <returns>The updated invoice or 404 if not found</returns>
         [HttpPut("invoices/{id}")]
         public IActionResult UpdateInvoice(ulong id, [FromBody] InvoiceDto invoiceDto)
         {
@@ -68,6 +78,9 @@ namespace Invoices.Api.Controllers
             return Ok(invoices);
         }
 
+        /// <summary>
+        /// Gets sales invoices by company identification number.
+        /// </summary>
         [HttpGet("identification/{identificationNumber}/sales")]
         public IActionResult GetSalesByIdentificationNumber(string identificationNumber)
         {
@@ -75,6 +88,9 @@ namespace Invoices.Api.Controllers
             return Ok(invoices);
         }
 
+        /// <summary>
+        /// Gets purchase invoices by company identification number.
+        /// </summary>
         [HttpGet("identification/{identificationNumber}/purchases")]
         public IActionResult GetPurchasesByIdentificationNumber(string identificationNumber)
         {
@@ -82,13 +98,14 @@ namespace Invoices.Api.Controllers
             return Ok(invoices);
         }
 
+        /// <summary>
+        /// Gets statistical data about invoices in the system.
+        /// </summary>
         [HttpGet("invoices/statistics")]
         public IActionResult GetStatistics()
         {
             var statistics = invoiceManager.GetStatistics();
             return Ok(statistics);
         }
-
-        
     }
 }

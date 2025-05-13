@@ -1,12 +1,26 @@
 import React from "react";
 
+/**
+ * Component for select dropdown elements, supporting both single and multiple selection.
+ * 
+ * @param {Object} props - Component properties
+ * @param {string} props.name - Select name attribute
+ * @param {string} props.label - Label text for the select
+ * @param {string} props.prompt - Placeholder text for empty option
+ * @param {boolean} props.multiple - Whether multiple selection is allowed
+ * @param {boolean} props.required - Whether selection is required
+ * @param {Array} props.items - Array of items to populate the dropdown
+ * @param {Object} props.enum - Optional object mapping item values to display names
+ * @param {string|Array} props.value - Selected value(s)
+ * @param {Function} props.handleChange - Change event handler
+ */
 export function InputSelect(props) {
   const multiple = props.multiple;
   const required = props.required || false;
 
-  // příznak označení prázdné hodnoty
+  // Flag for empty value selection
   const emptySelected = multiple ? props.value?.length === 0 : !props.value;
-  // příznak objektové struktury položek
+  // Flag for object-structured items
   const objectItems = props.enum ? false : true;
 
   return (
@@ -21,25 +35,25 @@ export function InputSelect(props) {
         value={props.value}
       >
         {required ? (
-          /* prázdná hodnota zakázaná (pro úpravu záznamu) */
+          /* Empty option not allowed (for record editing) */
           <option disabled value={emptySelected}>
             {props.prompt}
           </option>
         ) : (
-          /* prázdná hodnota povolená (pro filtrování přehledu) */
+          /* Empty option allowed (for overview filtering) */
           <option key={0} value={emptySelected}>
             ({props.prompt})
           </option>
         )}
 
         {objectItems
-          ? /* vykreslení položek jako objektů z databáze (osobnosti) */
+          ? /* Render items as objects from database (persons) */
             props.items.map((item, index) => (
               <option key={required ? index : index + 1} value={item._id}>
                 {item.name}
               </option>
             ))
-          : /* vykreslení položek jako hodnot z výčtu (žánry) */
+          : /* Render items as values from enumeration (genres) */
             props.items.map((item, index) => (
               <option key={required ? index : index + 1} value={item}>
                 {props.enum[item]}

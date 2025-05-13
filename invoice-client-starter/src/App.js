@@ -38,8 +38,11 @@ import InvoiceIndex from "./invoices/InvoiceIndex";
 import InvoiceDetail from "./invoices/InvoiceDetail";
 import InvoiceForm from "./invoices/InvoiceForm";
 
-import Statistics from "./Statistics"; // Importujeme komponentu statistiky
+import Statistics from "./Statistics"; // Import for statistics component
 
+/**
+ * Main application component that sets up routing and navigation.
+ */
 export function App() {
   return (
     <Router>
@@ -65,7 +68,7 @@ export function App() {
         </nav>
 
         <Routes>
-          <Route index element={<Statistics />} /> {/* Statistiky jako hlavní stránka */}
+          <Route index element={<Statistics />} /> {/* Statistics as home page */}
           <Route path="/persons">
             <Route index element={<PersonIndex />} />
             <Route path="show/:id" element={<PersonDetail />} />

@@ -24,8 +24,20 @@ using Invoices.Data.Models;
 
 namespace Invoices.Data.Interfaces;
 
+/// <summary>
+/// Repository interface for person-related database operations.
+/// </summary>
 public interface IPersonRepository : IBaseRepository<Person>
 {
+    /// <summary>
+    /// Gets all persons based on their hidden status.
+    /// </summary>
+    /// <param name="hidden">If true, returns hidden persons; otherwise, returns visible persons</param>
     IList<Person> GetAllByHidden(bool hidden);
+
+    /// <summary>
+    /// Selects a person by ID only if it's not hidden.
+    /// </summary>
+    /// <returns>The person if found and not hidden; otherwise, null</returns>
     Person? Select(ulong id);
 }

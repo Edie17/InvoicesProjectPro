@@ -26,6 +26,9 @@ import {useParams} from "react-router-dom";
 import {apiGet} from "../utils/api";
 import Country from "./Country";
 
+/**
+ * Component for displaying detailed information about a specific person.
+ */
 const PersonDetail = () => {
     const {id} = useParams();
     const [person, setPerson] = useState({});
@@ -35,6 +38,8 @@ const PersonDetail = () => {
         .then((data) => setPerson(data))
         .catch((error) => console.error("Chyba při načítání detailu osoby:", error));
     }, [id]);
+    
+    // Get human-readable country name
     const country = Country.CZECHIA === person.country ? "Česká republika" : "Slovensko";
 
     return (

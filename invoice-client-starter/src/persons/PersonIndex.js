@@ -26,9 +26,18 @@ import {apiDelete, apiGet} from "../utils/api";
 
 import PersonTable from "./PersonTable";
 
+/**
+ * Component for displaying a list of all persons.
+ * Provides functionality to view, edit, and delete persons.
+ */
 const PersonIndex = () => {
     const [persons, setPersons] = useState([]);
 
+    /**
+     * Deletes a person by its ID.
+     * 
+     * @param {string} id - The ID of the person to delete
+     */
     const deletePerson = async (id) => {
         try {
             await apiDelete("/api/persons/" + id);

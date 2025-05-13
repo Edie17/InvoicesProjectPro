@@ -5,6 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace Invoices.Api.Models
 {
+    /// <summary>
+    /// Data transfer object for invoices.
+    /// </summary>
     public class InvoiceDto
     {
         [JsonPropertyName("_id")]
@@ -26,7 +29,5 @@ namespace Invoices.Api.Models
 
         public PersonDto? Seller { get; set; }
         public PersonDto? Buyer { get; set; }
-
-
     }
 }

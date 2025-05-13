@@ -25,6 +25,9 @@ using System.Text.Json.Serialization;
 
 namespace Invoices.Api.Models;
 
+/// <summary>
+/// Data transfer object for persons.
+/// </summary>
 public class PersonDto
 {
     [JsonPropertyName("_id")]

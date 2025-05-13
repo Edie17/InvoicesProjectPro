@@ -1,3 +1,7 @@
+/**
+ * Development server proxy configuration.
+ * Routes API requests to the backend server.
+ */
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = function(app) {
@@ -6,18 +10,18 @@ module.exports = function(app) {
     createProxyMiddleware({
       target: 'https://localhost:7071',
       changeOrigin: true,
-      secure: false, // Důležité pro self-signed certifikáty
+      secure: false, // Important for self-signed certificates
       onProxyReq: (proxyReq, req, res) => {
-        // Log všech požadavků pro debugging
-        console.log('Proxy požadavek:', req.method, req.path);
+        // Log all requests for debugging
+        console.log('Proxy request:', req.method, req.path);
       },
       onProxyRes: (proxyRes, req, res) => {
-        // Log odpovědí
-        console.log('Proxy odpověď:', proxyRes.statusCode);
+        // Log responses
+        console.log('Proxy response:', proxyRes.statusCode);
       },
       onError: (err, req, res) => {
-        // Zachycení chyb v proxy
-        console.error('Proxy chyba:', err);
+        // Catch proxy errors
+        console.error('Proxy error:', err);
       }
     })
   );

@@ -25,35 +25,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Invoices.Data;
 
-
-
+/// <summary>
+/// Entity Framework DbContext for working with the invoices database.
+/// </summary>
 public class InvoicesDbContext : DbContext
 {
     public DbSet<Person>? Persons { get; set; } = null!;
-   
-
 
     public InvoicesDbContext(DbContextOptions<InvoicesDbContext> options)
         : base(options)
     {
     }
 
+    /// <summary>
+    /// Configures entity relationships and properties on model creation.
+    /// </summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        // Configure price as decimal with specific precision
         modelBuilder
             .Entity<Invoice>()
             .Property(x => x.Price)
             .HasColumnType("decimal(10,2)");
 
-
+        // Configure invoice-buyer relationship
         modelBuilder
             .Entity<Invoice>()
           .HasOne(i => i.Buyer)
           .WithMany(p => p.Purchases)
           .HasForeignKey(i => i.BuyerId);
 
+        // Configure invoice-seller relationship
         modelBuilder
             .Entity<Invoice>()
           .HasOne(i => i.Seller)
@@ -61,4 +65,3 @@ public class InvoicesDbContext : DbContext
           .HasForeignKey(i => i.SellerId);
     }
 }
-

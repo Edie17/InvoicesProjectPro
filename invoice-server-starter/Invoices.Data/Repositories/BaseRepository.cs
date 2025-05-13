@@ -26,18 +26,20 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Invoices.Data.Repositories;
 
+/// <summary>
+/// Base implementation of repository pattern for database operations.
+/// </summary>
+/// <typeparam name="TEntity">Entity type the repository works with</typeparam>
 public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
 {
     protected readonly InvoicesDbContext invoicesDbContext;
     protected readonly DbSet<TEntity> dbSet;
-
 
     public BaseRepository(InvoicesDbContext invoicesDbContext)
     {
         this.invoicesDbContext = invoicesDbContext;
         dbSet = invoicesDbContext.Set<TEntity>();
     }
-
 
     public TEntity? FindById(ulong id)
     {

@@ -25,12 +25,14 @@ using Invoices.Data.Models;
 
 namespace Invoices.Data.Repositories;
 
+/// <summary>
+/// Repository implementation for person-related database operations.
+/// </summary>
 public class PersonRepository : BaseRepository<Person>, IPersonRepository
 {
     public PersonRepository(InvoicesDbContext invoicesDbContext) : base(invoicesDbContext)
     {
     }
-
 
     public IList<Person> GetAllByHidden(bool hidden)
     {

@@ -20,6 +20,13 @@
  * Více informací na http://www.itnetwork.cz/licence
  */
 
+/**
+ * Formats a date string into a localized or standardized format.
+ * 
+ * @param {string} str - The date string to format
+ * @param {boolean} locale - If true, uses localized format; otherwise uses standardized format
+ * @returns {string} - The formatted date string
+ */
 export const dateStringFormatter = (str, locale = false) => {
     const d = new Date(str);
 

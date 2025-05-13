@@ -24,5 +24,9 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 
+/**
+ * Application entry point.
+ * Renders the main App component to the root DOM element.
+ */
 const root = createRoot(document.getElementById("root"));
 root.render(<App />);

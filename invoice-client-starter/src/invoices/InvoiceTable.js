@@ -2,6 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { dateStringFormatter } from "../utils/dateStringFormatter";
 
+/**
+ * Component for displaying invoices in a table format.
+ * 
+ * @param {Object} props - Component properties
+ * @param {string} props.label - Label to display before the count of items
+ * @param {Array} props.items - Array of invoice objects to display
+ * @param {Function} props.deleteInvoice - Function to call when deleting an invoice
+ */
 const InvoiceTable = ({ label, items, deleteInvoice }) => {
     return (
         <div>

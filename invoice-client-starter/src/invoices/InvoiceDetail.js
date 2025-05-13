@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import { apiGet } from "../utils/api";
 import { dateStringFormatter } from "../utils/dateStringFormatter";
 
+/**
+ * Component for displaying detailed information about a specific invoice.
+ */
 const InvoiceDetail = () => {
     const { id } = useParams();
     const [invoice, setInvoice] = useState({});

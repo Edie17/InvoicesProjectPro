@@ -5,6 +5,10 @@ import InputField from "../components/InputField";
 import InputSelect from "../components/InputSelect";
 import FlashMessage from "../components/FlashMessage";
 
+/**
+ * Component for creating and editing invoices.
+ * Handles both creation of new invoices and editing existing ones.
+ */
 const InvoiceForm = () => {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -12,7 +16,7 @@ const InvoiceForm = () => {
     const [invoice, setInvoice] = useState({
         invoiceNumber: "",
         issued: new Date().toISOString().split("T")[0],
-        dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // Due date: today + 14 days
         product: "",
         price: 0,
         vat: 21,
@@ -25,10 +29,10 @@ const InvoiceForm = () => {
     const [errorState, setError] = useState(null);
 
     useEffect(() => {
-        // Načtení všech osob pro výběr
+        // Load all persons for selection
         apiGet("/api/persons").then((data) => setPersons(data));
 
-        // Pokud je ID, načteme fakturu pro úpravu
+        // If ID is provided, load the invoice for editing
         if (id) {
             apiGet("/api/invoices/" + id).then((data) => {
                 const processedData = {
@@ -43,10 +47,13 @@ const InvoiceForm = () => {
         }
     }, [id]);
 
+    /**
+     * Handles form submission for creating or updating an invoice.
+     */
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Připravíme data pro odeslání
+        // Prepare data for submission
         const invoiceData = {
             ...invoice,
             price: parseFloat(invoice.price),

@@ -31,6 +31,10 @@ import FlashMessage from "../components/FlashMessage";
 
 import Country from "./Country";
 
+/**
+ * Component for creating and editing persons.
+ * Handles both creation of new persons and editing existing ones.
+ */
 const PersonForm = () => {
     const navigate = useNavigate();
     const {id} = useParams();
@@ -59,6 +63,9 @@ const PersonForm = () => {
         }
     }, [id]);
 
+    /**
+     * Handles form submission for creating or updating a person.
+     */
     const handleSubmit = (e) => {
         e.preventDefault();
 
