@@ -47,10 +47,59 @@ namespace Invoices.Api.Managers
             return addedInvoiceDto;
         }
 
-        public IEnumerable<InvoiceDto> GetAllInvoices()
+        /// <summary>
+        /// Gets all invoices with optional filtering.
+        /// </summary>
+        public IEnumerable<InvoiceDto> GetAllInvoices(
+            ulong? sellerId = null,
+            ulong? buyerId = null,
+            string? product = null,
+            decimal? minPrice = null,
+            decimal? maxPrice = null,
+            int? limit = null)
         {
-            IList<Invoice> invoice = invoiceRepository.GetAll();
-            return mapper.Map<IList<InvoiceDto>>(invoice);
+            IQueryable<Invoice> query = invoiceRepository.GetAll().AsQueryable();
+
+            // Apply seller filter
+            if (sellerId.HasValue && sellerId.Value > 0)
+            {
+                query = query.Where(i => i.SellerId == sellerId.Value);
+            }
+
+            // Apply buyer filter
+            if (buyerId.HasValue && buyerId.Value > 0)
+            {
+                query = query.Where(i => i.BuyerId == buyerId.Value);
+            }
+
+            // Apply product filter
+            if (!string.IsNullOrWhiteSpace(product))
+            {
+                var productLower = product.Trim().ToLower();
+                query = query.Where(i => i.Product.ToLower().Contains(productLower));
+            }
+
+            // Apply minimum price filter
+            if (minPrice.HasValue && minPrice.Value >= 0)
+            {
+                query = query.Where(i => i.Price >= minPrice.Value);
+            }
+
+            // Apply maximum price filter
+            if (maxPrice.HasValue && maxPrice.Value >= 0)
+            {
+                query = query.Where(i => i.Price <= maxPrice.Value);
+            }
+
+            // Apply limit
+            if (limit.HasValue && limit.Value > 0)
+            {
+                query = query.Take(limit.Value);
+            }
+
+            // Execute query and map to DTOs
+            var invoices = query.ToList();
+            return mapper.Map<IEnumerable<InvoiceDto>>(invoices);
         }
 
         public InvoiceDto? GetInvoice(ulong id)

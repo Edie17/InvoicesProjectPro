@@ -30,10 +30,41 @@ namespace Invoices.Api.Controllers
             return StatusCode(StatusCodes.Status201Created, createdInvoice);
         }
 
+        /// <summary>
+        /// Gets all invoices with optional filtering.
+        /// </summary>
+        /// <param name="sellerId">Filter by seller ID</param>
+        /// <param name="buyerId">Filter by buyer ID</param>
+        /// <param name="product">Filter by product name (partial match)</param>
+        /// <param name="minPrice">Filter by minimum price</param>
+        /// <param name="maxPrice">Filter by maximum price</param>
+        /// <param name="limit">Limit number of results</param>
+        /// <returns>Filtered list of invoices</returns>
         [HttpGet("invoices")]
-        public IEnumerable<InvoiceDto> GetAllInvoices()
+        public IEnumerable<InvoiceDto> GetAllInvoices(
+            [FromQuery] ulong? sellerId = null,
+            [FromQuery] ulong? buyerId = null,
+            [FromQuery] string? product = null,
+            [FromQuery] decimal? minPrice = null,
+            [FromQuery] decimal? maxPrice = null,
+            [FromQuery] int? limit = null)
         {
-            return invoiceManager.GetAllInvoices();
+            // Clean up parameters to handle empty strings and invalid values
+            var cleanedSellerId = sellerId.HasValue && sellerId.Value > 0 ? sellerId : null;
+            var cleanedBuyerId = buyerId.HasValue && buyerId.Value > 0 ? buyerId : null;
+            var cleanedProduct = string.IsNullOrWhiteSpace(product) ? null : product.Trim();
+            var cleanedMinPrice = minPrice.HasValue && minPrice.Value >= 0 ? minPrice : null;
+            var cleanedMaxPrice = maxPrice.HasValue && maxPrice.Value >= 0 ? maxPrice : null;
+            var cleanedLimit = limit.HasValue && limit.Value > 0 ? limit : null;
+
+            return invoiceManager.GetAllInvoices(
+                cleanedSellerId,
+                cleanedBuyerId,
+                cleanedProduct,
+                cleanedMinPrice,
+                cleanedMaxPrice,
+                cleanedLimit
+            );
         }
 
         /// <summary>

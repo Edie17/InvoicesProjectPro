@@ -8,7 +8,24 @@ namespace Invoices.Api.Interfaces
     public interface IInvoiceManager
     {
         InvoiceDto AddInvoice(InvoiceDto invoiceDto);
-        IEnumerable<InvoiceDto> GetAllInvoices();
+
+        /// <summary>
+        /// Gets all invoices with optional filtering.
+        /// </summary>
+        /// <param name="sellerId">Filter by seller ID</param>
+        /// <param name="buyerId">Filter by buyer ID</param>
+        /// <param name="product">Filter by product name (partial match)</param>
+        /// <param name="minPrice">Filter by minimum price</param>
+        /// <param name="maxPrice">Filter by maximum price</param>
+        /// <param name="limit">Limit number of results</param>
+        /// <returns>Filtered list of invoices</returns>
+        IEnumerable<InvoiceDto> GetAllInvoices(
+            ulong? sellerId = null,
+            ulong? buyerId = null,
+            string? product = null,
+            decimal? minPrice = null,
+            decimal? maxPrice = null,
+            int? limit = null);
 
         /// <summary>
         /// Gets an invoice by ID.
