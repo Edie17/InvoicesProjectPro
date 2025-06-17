@@ -76,7 +76,7 @@ public class PersonsController : ControllerBase
     }
 
     [HttpDelete("persons/{personId}")]
-    public IActionResult DeletePerson(uint personId)
+    public IActionResult DeletePerson(ulong personId)
     {
         personManager.DeletePerson(personId);
         return NoContent();
@@ -89,12 +89,17 @@ public class PersonsController : ControllerBase
     [HttpPut("persons/{id}")]
     public IActionResult UpdatePerson(ulong id, [FromBody] PersonDto personDto)
     {
-        PersonDto? updatedPerson = personManager.UpdatePerson(id, personDto);
-        if (updatedPerson == null)
+        try
         {
-            return NotFound();
+            PersonDto? updatedPerson = personManager.UpdatePerson(id, personDto);
+            if (updatedPerson == null)
+                return NotFound();
+            return Ok(updatedPerson);
         }
-        return Ok(updatedPerson);
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     /// <summary>
@@ -103,27 +108,16 @@ public class PersonsController : ControllerBase
     [HttpGet("persons/statistics")]
     public IActionResult GetPersonsStatistics()
     {
-        // Get all persons
         var persons = personManager.GetAllPersons();
+        var revenues = invoiceManager.GetRevenueByPersonIds(persons.Select(p => p.PersonId));
 
-        // Result list for person statistics
-        var personsStatistics = new List<object>();
-
-        // For each person, get their statistics
-        foreach (var person in persons)
+        var result = persons.Select(p => new
         {
-            // Get statistics for the current person
-            var statistics = invoiceManager.GetPersonStatistics(person.PersonId);
+            personId = p.PersonId,
+            personName = p.Name,
+            revenue = revenues.TryGetValue(p.PersonId, out var r) ? r : 0m
+        });
 
-            // Add to the result in the format specified in documentation
-            personsStatistics.Add(new
-            {
-                personId = person.PersonId,
-                personName = person.Name,
-                revenue = statistics.TotalAmount
-            });
-        }
-
-        return Ok(personsStatistics);
+        return Ok(result);
     }
 }

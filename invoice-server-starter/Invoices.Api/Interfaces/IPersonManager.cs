@@ -31,7 +31,7 @@ public interface IPersonManager
 {
     IList<PersonDto> GetAllPersons();
     PersonDto AddPerson(PersonDto personDto);
-    void DeletePerson(uint personId);
+    void DeletePerson(ulong personId);
 
     /// <summary>
     /// Gets a person by ID.

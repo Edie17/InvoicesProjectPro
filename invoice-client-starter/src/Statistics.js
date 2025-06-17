@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { apiGet } from "./utils/api";
 import { Link } from "react-router-dom";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar, Doughnut } from "react-chartjs-2";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 /**
  * Component that displays dashboard statistics about invoices and persons.
@@ -26,10 +39,6 @@ const Statistics = () => {
       apiGet("/api/persons/statistics")
     ])
       .then(([invoiceData, personData]) => {
-        console.log("Statistiky faktur:", invoiceData);
-        console.log("Statistiky osob:", personData);
-        
-        // Set invoice data according to format from documentation
         setInvoiceStats({
           currentYearSum: invoiceData.currentYearSum || 0,
           allTimeSum: invoiceData.allTimeSum || 0,
@@ -114,6 +123,77 @@ const Statistics = () => {
         </div>
       </div>
       
+      {personStats.length > 0 && (
+        <div className="row mb-5">
+          <div className="col-md-8">
+            <div className="card shadow-sm">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">Příjmy podle společností</h5>
+              </div>
+              <div className="card-body">
+                <Bar
+                  data={{
+                    labels: personStats.map((p) => p.personName),
+                    datasets: [{
+                      label: "Příjmy (Kč)",
+                      data: personStats.map((p) => p.revenue),
+                      backgroundColor: [
+                        "#0d6efd","#198754","#0dcaf0","#ffc107","#dc3545",
+                      ],
+                      borderRadius: 6,
+                    }],
+                  }}
+                  options={{
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                      y: {
+                        ticks: {
+                          callback: (v) => v.toLocaleString("cs-CZ") + " Kč",
+                        },
+                      },
+                    },
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4">
+            <div className="card shadow-sm">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">Podíl příjmů</h5>
+              </div>
+              <div className="card-body d-flex align-items-center justify-content-center">
+                <Doughnut
+                  data={{
+                    labels: personStats.map((p) => p.personName),
+                    datasets: [{
+                      data: personStats.map((p) => p.revenue),
+                      backgroundColor: [
+                        "#0d6efd","#198754","#0dcaf0","#ffc107","#dc3545",
+                      ],
+                      borderWidth: 2,
+                    }],
+                  }}
+                  options={{
+                    responsive: true,
+                    plugins: {
+                      legend: { position: "bottom", labels: { boxWidth: 12 } },
+                      tooltip: {
+                        callbacks: {
+                          label: (ctx) =>
+                            " " + ctx.parsed.toLocaleString("cs-CZ") + " Kč",
+                        },
+                      },
+                    },
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="row mb-4">
         <div className="col-md-12">
           <div className="card">

@@ -86,4 +86,11 @@ app.MapGet("/", () => "Hello World!");
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<InvoicesDbContext>();
+    db.Database.Migrate();
+    DatabaseSeeder.Seed(db);
+}
+
 app.Run();

@@ -41,7 +41,7 @@ export function InputSelect(props) {
           </option>
         ) : (
           /* Empty option allowed (for overview filtering) */
-          <option key={0} value={emptySelected}>
+          <option key={0} value="">
             ({props.prompt})
           </option>
         )}

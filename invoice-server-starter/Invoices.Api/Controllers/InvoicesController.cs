@@ -47,23 +47,21 @@ namespace Invoices.Api.Controllers
             [FromQuery] string? product = null,
             [FromQuery] decimal? minPrice = null,
             [FromQuery] decimal? maxPrice = null,
-            [FromQuery] int? limit = null)
+            [FromQuery] int? limit = null,
+            [FromQuery] int? invoiceNumber = null,
+            [FromQuery] DateTime? issuedFrom = null,
+            [FromQuery] DateTime? issuedTo = null)
         {
-            // Clean up parameters to handle empty strings and invalid values
-            var cleanedSellerId = sellerId.HasValue && sellerId.Value > 0 ? sellerId : null;
-            var cleanedBuyerId = buyerId.HasValue && buyerId.Value > 0 ? buyerId : null;
-            var cleanedProduct = string.IsNullOrWhiteSpace(product) ? null : product.Trim();
-            var cleanedMinPrice = minPrice.HasValue && minPrice.Value >= 0 ? minPrice : null;
-            var cleanedMaxPrice = maxPrice.HasValue && maxPrice.Value >= 0 ? maxPrice : null;
-            var cleanedLimit = limit.HasValue && limit.Value > 0 ? limit : null;
-
             return invoiceManager.GetAllInvoices(
-                cleanedSellerId,
-                cleanedBuyerId,
-                cleanedProduct,
-                cleanedMinPrice,
-                cleanedMaxPrice,
-                cleanedLimit
+                sellerId,
+                buyerId,
+                product,
+                minPrice,
+                maxPrice,
+                limit,
+                invoiceNumber,
+                issuedFrom,
+                issuedTo
             );
         }
 

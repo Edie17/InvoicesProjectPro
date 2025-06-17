@@ -24,10 +24,11 @@ import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
 import {apiGet, apiPost, apiPut} from "../utils/api";
+import { useToast } from "../components/ToastContext";
+import Breadcrumb from "../components/Breadcrumb";
 
 import InputField from "../components/InputField";
 import InputCheck from "../components/InputCheck";
-import FlashMessage from "../components/FlashMessage";
 
 import Country from "./Country";
 
@@ -38,6 +39,7 @@ import Country from "./Country";
 const PersonForm = () => {
     const navigate = useNavigate();
     const {id} = useParams();
+    const showToast = useToast();
     const [person, setPerson] = useState({
         name: "",
         identificationNumber: "",
@@ -53,9 +55,6 @@ const PersonForm = () => {
         country: Country.CZECHIA,
         note: ""
     });
-    const [sentState, setSent] = useState(false);
-    const [successState, setSuccess] = useState(false);
-    const [errorState, setError] = useState(null);
 
     useEffect(() => {
         if (id) {
@@ -68,37 +67,26 @@ const PersonForm = () => {
      */
     const handleSubmit = (e) => {
         e.preventDefault();
-
+        // apiPut a apiPost vrací stejnou strukturu dat, takže není potřeba je nijak upravovat
         (id ? apiPut("/api/persons/" + id, person) : apiPost("/api/persons", person))
-            .then((data) => {
-                setSent(true);
-                setSuccess(true);
+            .then(() => {
+                showToast(id ? "Osoba byla upravena." : "Osoba byla vytvořena.", "success");
                 navigate("/persons");
             })
             .catch((error) => {
-                console.log(error.message);
-                setError(error.message);
-                setSent(true);
-                setSuccess(false);
+                showToast(error.message, "danger");
             });
     };
 
-    const sent = sentState;
-    const success = successState;
-
     return (
         <div>
-            <h1>{id ? "Upravit" : "Vytvořit"} osobnost</h1>
+            <Breadcrumb items={[
+                { to: "/", label: "Přehled" },
+                { to: "/persons", label: "Osoby" },
+                { label: id ? "Upravit osobu" : "Nová osoba" }
+            ]} />
+            <h1>{id ? "Upravit" : "Vytvořit"} osobu</h1>
             <hr/>
-            {errorState ? (
-                <div className="alert alert-danger">{errorState}</div>
-            ) : null}
-            {sent && (
-                <FlashMessage
-                    theme={success ? "success" : ""}
-                    text={success ? "Uložení osobnosti proběhlo úspěšně." : ""}
-                />
-            )}
             <form onSubmit={handleSubmit}>
                 <InputField
                     required={true}

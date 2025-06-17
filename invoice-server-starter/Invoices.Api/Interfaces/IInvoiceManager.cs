@@ -25,7 +25,10 @@ namespace Invoices.Api.Interfaces
             string? product = null,
             decimal? minPrice = null,
             decimal? maxPrice = null,
-            int? limit = null);
+            int? limit = null,
+            int? invoiceNumber = null,
+            DateTime? issuedFrom = null,
+            DateTime? issuedTo = null);
 
         /// <summary>
         /// Gets an invoice by ID.
@@ -48,6 +51,11 @@ namespace Invoices.Api.Interfaces
         /// Gets sales invoices where the person with the given identification number is the seller.
         /// </summary>
         IEnumerable<InvoiceDto> GetSalesByIdentificationNumber(string identificationNumber);
+
+        /// <summary>
+        /// Gets total invoice amounts grouped by person ID (seller or buyer) in a single query.
+        /// </summary>
+        IDictionary<ulong, decimal> GetRevenueByPersonIds(IEnumerable<ulong> personIds);
 
         /// <summary>
         /// Gets purchase invoices where the person with the given identification number is the buyer.

@@ -21,21 +21,14 @@
  */
 
 /**
- * Base API URL prefix
- */
-const API_URL = "/api";
-
-/**
  * Utility function for making API requests with proper error handling.
- * 
+ *
  * @param {string} url - API endpoint URL
  * @param {Object} requestOptions - Fetch request options
  * @returns {Promise} - Promise that resolves with the response data
  */
 const fetchData = (url, requestOptions) => {
-    const apiUrl = `${API_URL}${url}`;
-
-    return fetch(apiUrl, requestOptions)
+    return fetch(url, requestOptions)
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
@@ -43,9 +36,6 @@ const fetchData = (url, requestOptions) => {
 
             if (requestOptions.method !== 'DELETE')
                 return response.json();
-        })
-        .catch((error) => {
-            throw error;
         });
 };
 
@@ -105,7 +95,7 @@ export const apiPut = (url, data) => {
 
 /**
  * Performs a DELETE request to the API.
- * 
+ *
  * @param {string} url - API endpoint URL
  * @returns {Promise} - Promise that resolves when the delete is complete
  */
@@ -115,4 +105,14 @@ export const apiDelete = (url) => {
     };
 
     return fetchData(url, requestOptions);
+};
+
+/**
+ * Filters invoices using GET query parameters.
+ *
+ * @param {Object} params - Filter parameters (sellerId, buyerId, product, minPrice, maxPrice, limit, invoiceNumber, issuedFrom, issuedTo)
+ * @returns {Promise} - Promise that resolves with filtered invoice list
+ */
+export const apiFilterInvoices = (params) => {
+    return apiGet("/api/invoices", params);
 };

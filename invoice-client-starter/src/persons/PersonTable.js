@@ -1,85 +1,98 @@
-/*  _____ _______         _                      _
- * |_   _|__   __|       | |                    | |
- *   | |    | |_ __   ___| |___      _____  _ __| | __  ___ ____
- *   | |    | | '_ \ / _ \ __\ \ /\ / / _ \| '__| |/ / / __|_  /
- *  _| |_   | | | | |  __/ |_ \ V  V / (_) | |  |   < | (__ / /
- * |_____|  |_|_| |_|\___|\__| \_/\_/ \___/|_|  |_|\_(_)___/___|
- *                                _
- *              ___ ___ ___ _____|_|_ _ _____
- *             | . |  _| -_|     | | | |     |  LICENCE
- *             |  _|_| |___|_|_|_|_|___|_|_|_|
- *             |_|
- *
- *   PROGRAMOVÁNÍ  <>  DESIGN  <>  PRÁCE/PODNIKÁNÍ  <>  HW A SW
- *
- * Tento zdrojový kód je součástí výukových seriálů na
- * IT sociální síti WWW.ITNETWORK.CZ
- *
- * Kód spadá pod licenci prémiového obsahu a vznikl díky podpoře
- * našich členů. Je určen pouze pro osobní užití a nesmí být šířen.
- * Více informací na http://www.itnetwork.cz/licence
- */
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import ConfirmModal from "../components/ConfirmModal";
 
-import React from "react";
-import {Link} from "react-router-dom";
+const PAGE_SIZE = 10;
 
-/**
- * Component for displaying persons in a table format.
- * 
- * @param {Object} props - Component properties
- * @param {string} props.label - Label to display before the count of items
- * @param {Array} props.items - Array of person objects to display
- * @param {Function} props.deletePerson - Function to call when deleting a person
- */
-const PersonTable = ({label, items, deletePerson}) => {
+const PersonTable = ({ label, items, deletePerson }) => {
+    const [sortDir, setSortDir] = useState("asc");
+    const [page, setPage] = useState(1);
+    const [pendingDeleteId, setPendingDeleteId] = useState(null);
+
+    const sorted = [...items].sort((a, b) => {
+        const av = a.name.toLowerCase(), bv = b.name.toLowerCase();
+        if (av < bv) return sortDir === "asc" ? -1 : 1;
+        if (av > bv) return sortDir === "asc" ? 1 : -1;
+        return 0;
+    });
+
+    const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+    const paginated = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
     return (
         <div>
-            <p>
-                {label} {items.length}
-            </p>
+            <p className="text-muted">{label} <strong>{items.length}</strong></p>
 
-            <table className="table table-bordered">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Jméno</th>
-                    <th colSpan={3}>Akce</th>
-                </tr>
-                </thead>
-                <tbody>
-                {items.map((item, index) => (
-                    <tr key={index + 1}>
-                        <td>{index + 1}</td>
-                        <td>{item.name}</td>
-                        <td>
-                            <div className="btn-group">
-                                <Link
-                                    to={"/persons/show/" + item._id}
-                                    className="btn btn-sm btn-info"
-                                >
-                                    Zobrazit
-                                </Link>
-                                <Link
-                                    to={"/persons/edit/" + item._id}
-                                    className="btn btn-sm btn-warning"
-                                >
-                                    Upravit
-                                </Link>
-                                <button
-                                    onClick={() => deletePerson(item._id)}
-                                    className="btn btn-sm btn-danger"
-                                >
-                                    Odstranit
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-            <Link to={"/persons/create"} className="btn btn-success">
-                Nová osoba
-            </Link>
+            <ConfirmModal
+                show={pendingDeleteId !== null}
+                message="Opravdu chcete tuto osobu smazat? Tato akce je nevratná."
+                onConfirm={() => { deletePerson(pendingDeleteId); setPendingDeleteId(null); }}
+                onCancel={() => setPendingDeleteId(null)}
+            />
+
+            <div className="table-responsive">
+                <table className="table table-hover table-bordered align-middle">
+                    <thead className="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th
+                                onClick={() => { setSortDir(d => d === "asc" ? "desc" : "asc"); setPage(1); }}
+                                style={{ cursor: "pointer", userSelect: "none" }}
+                            >
+                                Jméno <span className="ms-1" style={{ fontSize: "0.7rem" }}>{sortDir === "asc" ? "▲" : "▼"}</span>
+                            </th>
+                            <th>Akce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {paginated.map((item, index) => (
+                            <tr key={item._id}>
+                                <td className="text-muted">{(page - 1) * PAGE_SIZE + index + 1}</td>
+                                <td><strong>{item.name}</strong></td>
+                                <td>
+                                    <div className="btn-group btn-group-sm">
+                                        <Link to={"/persons/show/" + item._id} className="btn btn-outline-info">Zobrazit</Link>
+                                        <Link to={"/persons/edit/" + item._id} className="btn btn-outline-warning">Upravit</Link>
+                                        <button
+                                            onClick={() => setPendingDeleteId(item._id)}
+                                            className="btn btn-outline-danger"
+                                        >
+                                            Smazat
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                        {paginated.length === 0 && (
+                            <tr>
+                                <td colSpan={3} className="text-center text-muted py-4">Žádné osoby</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+
+            {totalPages > 1 && (
+                <nav>
+                    <ul className="pagination pagination-sm justify-content-center">
+                        <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+                            <button className="page-link" onClick={() => setPage(p => p - 1)}>«</button>
+                        </li>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                            <li key={p} className={`page-item ${p === page ? "active" : ""}`}>
+                                <button className="page-link" onClick={() => setPage(p)}>{p}</button>
+                            </li>
+                        ))}
+                        <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+                            <button className="page-link" onClick={() => setPage(p => p + 1)}>»</button>
+                        </li>
+                    </ul>
+                </nav>
+            )}
+
+            <div className="mt-2">
+                <Link to={"/persons/create"} className="btn btn-success">+ Nová osoba</Link>
+            </div>
         </div>
     );
 };

@@ -25,6 +25,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import {
   BrowserRouter as Router,
   Link,
+  NavLink,
   Route,
   Routes,
   Navigate,
@@ -37,38 +38,88 @@ import PersonForm from "./persons/PersonForm";
 import InvoiceIndex from "./invoices/InvoiceIndex";
 import InvoiceDetail from "./invoices/InvoiceDetail";
 import InvoiceForm from "./invoices/InvoiceForm";
+import InvoiceFilterPage from "./invoices/InvoiceFilterPage";
 
-import Statistics from "./Statistics"; // Import for statistics component
+import Statistics from "./Statistics";
+import { ToastProvider } from "./components/ToastContext";
 
 /**
  * Main application component that sets up routing and navigation.
  */
 export function App() {
   return (
+    <ToastProvider>
     <Router>
-      <div className="container">
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <Link to={"/"} className="nav-link">
-                Hlavní stránka
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to={"/persons"} className="nav-link">
-                Osoby
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to={"/invoices"} className="nav-link">
-                Faktury
-              </Link>
-            </li>
-          </ul>
-        </nav>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div className="container">
+          <Link to="/" className="navbar-brand fw-bold">
+            📄 InvoicePro
+          </Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNav"
+          >
+            <span className="navbar-toggler-icon" />
+          </button>
+          <div className="collapse navbar-collapse" id="mainNav">
+            <ul className="navbar-nav ms-auto">
+              <li className="nav-item">
+                <NavLink
+                  to="/"
+                  end
+                  className={({ isActive }) =>
+                    "nav-link" + (isActive ? " active fw-semibold" : "")
+                  }
+                >
+                  Přehled
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/persons"
+                  className={({ isActive }) =>
+                    "nav-link" + (isActive ? " active fw-semibold" : "")
+                  }
+                >
+                  Osoby
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/invoices"
+                  end
+                  className={({ isActive }) =>
+                    "nav-link" + (isActive ? " active fw-semibold" : "")
+                  }
+                >
+                  Faktury
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/invoices/filter"
+                  className={({ isActive }) =>
+                    "nav-link" + (isActive ? " active fw-semibold" : "")
+                  }
+                >
+                  Filtrace
+                </NavLink>
+              </li>
+              <li className="nav-item ms-lg-2">
+                <Link to="/invoices/create" className="btn btn-primary btn-sm">
+                  + Nová faktura
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
 
+      <div className="container py-4">
         <Routes>
-          <Route index element={<Statistics />} /> {/* Statistics as home page */}
+          <Route index element={<Statistics />} />
           <Route path="/persons">
             <Route index element={<PersonIndex />} />
             <Route path="show/:id" element={<PersonDetail />} />
@@ -80,10 +131,16 @@ export function App() {
             <Route path="show/:id" element={<InvoiceDetail />} />
             <Route path="create" element={<InvoiceForm />} />
             <Route path="edit/:id" element={<InvoiceForm />} />
+            <Route path="filter" element={<InvoiceFilterPage />} />
           </Route>
         </Routes>
       </div>
+
+      <footer className="bg-dark text-secondary text-center py-3 mt-auto">
+        <small>© {new Date().getFullYear()} InvoicePro</small>
+      </footer>
     </Router>
+    </ToastProvider>
   );
 }
 

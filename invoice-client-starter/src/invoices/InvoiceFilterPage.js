@@ -19,9 +19,7 @@ const InvoiceFilterPage = () => {
     const handleFilter = (filterData) => {
         setLoading(true);
         setError(null);
-        console.log("Filtrační data před odesláním:", filterData);
-        
-        // Očištění dat před odesláním
+
         const cleanFilterData = {};
         Object.entries(filterData).forEach(([key, value]) => {
             if (value !== null && value !== undefined && value !== "") {
@@ -29,27 +27,21 @@ const InvoiceFilterPage = () => {
                     cleanFilterData[key] = parseInt(value);
                 } else if (["minPrice", "maxPrice"].includes(key)) {
                     cleanFilterData[key] = parseFloat(value);
-                } else if (["sellerId", "buyerId"].includes(key) && value !== "") {
+                } else if (["sellerId", "buyerId"].includes(key)) {
                     cleanFilterData[key] = parseInt(value);
                 } else {
                     cleanFilterData[key] = value;
                 }
             }
         });
-        
-        console.log("Očištěná data pro odeslání:", cleanFilterData);
-        
-        // Volání API s POST metodou
+
         apiFilterInvoices(cleanFilterData)
             .then((data) => {
-                console.log("Přijatá data z API:", data);
                 setInvoices(data || []);
                 setSearched(true);
             })
             .catch((error) => {
-                console.error("Chyba při filtrování faktur:", error);
-                setError("Nepodařilo se filtrovat faktury. " + 
-                         (error.message || "Zkontrolujte správnost endpointu a parametrů."));
+                setError("Nepodařilo se filtrovat faktury. " + (error.message || ""));
             })
             .finally(() => {
                 setLoading(false);

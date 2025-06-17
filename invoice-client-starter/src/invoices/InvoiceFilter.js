@@ -25,16 +25,21 @@ const InvoiceFilter = ({ onFilter, onReset }) => {
     });
     const [loading, setLoading] = useState(true);
 
-    // Načtení osob pro výběr
+    const [products, setProducts] = useState([]);
+
     useEffect(() => {
         setLoading(true);
-        apiGet("/api/persons")
-            .then((data) => {
-                console.log("Načtené osoby:", data);
-                setPersons(data || []);
+        Promise.all([
+            apiGet("/api/persons"),
+            apiGet("/api/invoices")
+        ])
+            .then(([personData, invoiceData]) => {
+                setPersons(personData || []);
+                const unique = [...new Set((invoiceData || []).map(i => i.product).filter(Boolean))].sort();
+                setProducts(unique);
             })
             .catch(error => {
-                console.error("Chyba při načítání osob:", error);
+                console.error("Chyba při načítání dat:", error);
             })
             .finally(() => {
                 setLoading(false);
@@ -104,13 +109,20 @@ const InvoiceFilter = ({ onFilter, onReset }) => {
                                 />
                             </div>
                             <div className="col-md-4">
-                                <InputField
-                                    type="text"
-                                    name="product"
-                                    label="Produkt (obsahuje)"
-                                    value={filter.product}
-                                    handleChange={handleChange}
-                                />
+                                <div className="form-group">
+                                    <label>Produkt:</label>
+                                    <select
+                                        className="form-select"
+                                        name="product"
+                                        value={filter.product}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">(Všechny produkty)</option>
+                                        {products.map((p, i) => (
+                                            <option key={i} value={p}>{p}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                             <div className="col-md-4">
                                 <InputField

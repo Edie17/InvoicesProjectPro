@@ -43,6 +43,6 @@ public class PersonRepository : BaseRepository<Person>, IPersonRepository
 
     public Person? Select(ulong id)
     {
-        return invoicesDbContext.Persons.FirstOrDefault(p => p.PersonId == id && !p.Hidden);
+        return invoicesDbContext.Persons?.FirstOrDefault(p => p.PersonId == id && !p.Hidden);
     }
 }

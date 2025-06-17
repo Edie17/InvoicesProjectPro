@@ -37,14 +37,12 @@ namespace Invoices.Api.Managers
             invoice.Seller = null;
             Invoice addedInvoice = invoiceRepository.Insert(invoice);
 
-            if (invoice.BuyerId is not null)
-                invoice.Buyer = personRepository.FindById((ulong)invoice.BuyerId);
-            if (invoice.SellerId is not null)
-                invoice.Seller = personRepository.FindById((ulong)invoice.SellerId);
+            if (addedInvoice.BuyerId is not null)
+                addedInvoice.Buyer = personRepository.FindById((ulong)addedInvoice.BuyerId);
+            if (addedInvoice.SellerId is not null)
+                addedInvoice.Seller = personRepository.FindById((ulong)addedInvoice.SellerId);
 
-            InvoiceDto addedInvoiceDto = mapper.Map<InvoiceDto>(addedInvoice);
-
-            return addedInvoiceDto;
+            return mapper.Map<InvoiceDto>(addedInvoice);
         }
 
         /// <summary>
@@ -56,50 +54,44 @@ namespace Invoices.Api.Managers
             string? product = null,
             decimal? minPrice = null,
             decimal? maxPrice = null,
-            int? limit = null)
+            int? limit = null,
+            int? invoiceNumber = null,
+            DateTime? issuedFrom = null,
+            DateTime? issuedTo = null)
         {
             IQueryable<Invoice> query = invoiceRepository.GetAll().AsQueryable();
 
-            // Apply seller filter
             if (sellerId.HasValue && sellerId.Value > 0)
-            {
                 query = query.Where(i => i.SellerId == sellerId.Value);
-            }
 
-            // Apply buyer filter
             if (buyerId.HasValue && buyerId.Value > 0)
-            {
                 query = query.Where(i => i.BuyerId == buyerId.Value);
-            }
 
-            // Apply product filter
             if (!string.IsNullOrWhiteSpace(product))
             {
                 var productLower = product.Trim().ToLower();
                 query = query.Where(i => i.Product.ToLower().Contains(productLower));
             }
 
-            // Apply minimum price filter
             if (minPrice.HasValue && minPrice.Value >= 0)
-            {
                 query = query.Where(i => i.Price >= minPrice.Value);
-            }
 
-            // Apply maximum price filter
             if (maxPrice.HasValue && maxPrice.Value >= 0)
-            {
                 query = query.Where(i => i.Price <= maxPrice.Value);
-            }
 
-            // Apply limit
+            if (invoiceNumber.HasValue && invoiceNumber.Value > 0)
+                query = query.Where(i => i.InvoiceNumber == invoiceNumber.Value);
+
+            if (issuedFrom.HasValue)
+                query = query.Where(i => i.Issued >= issuedFrom.Value);
+
+            if (issuedTo.HasValue)
+                query = query.Where(i => i.Issued <= issuedTo.Value);
+
             if (limit.HasValue && limit.Value > 0)
-            {
                 query = query.Take(limit.Value);
-            }
 
-            // Execute query and map to DTOs
-            var invoices = query.ToList();
-            return mapper.Map<IEnumerable<InvoiceDto>>(invoices);
+            return mapper.Map<IEnumerable<InvoiceDto>>(query.ToList());
         }
 
         public InvoiceDto? GetInvoice(ulong id)
@@ -173,6 +165,22 @@ namespace Invoices.Api.Managers
 
             // Map to DTOs
             return mapper.Map<IEnumerable<InvoiceDto>>(invoices);
+        }
+
+        public IDictionary<ulong, decimal> GetRevenueByPersonIds(IEnumerable<ulong> personIds)
+        {
+            var idSet = new HashSet<ulong>(personIds);
+            var result = idSet.ToDictionary(id => id, id => 0m);
+
+            foreach (var invoice in invoiceRepository.GetAll())
+            {
+                if (invoice.SellerId.HasValue && idSet.Contains(invoice.SellerId.Value))
+                    result[invoice.SellerId.Value] += invoice.Price;
+                if (invoice.BuyerId.HasValue && idSet.Contains(invoice.BuyerId.Value))
+                    result[invoice.BuyerId.Value] += invoice.Price;
+            }
+
+            return result;
         }
 
         public void DeleteInvoice(ulong id)

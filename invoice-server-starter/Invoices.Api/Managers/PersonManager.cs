@@ -52,7 +52,7 @@ public class PersonManager : IPersonManager
     {
         Person? person = personRepository.FindById(personId);
 
-        if (person is null)
+        if (person is null || person.Hidden)
             return null;
 
         return mapper.Map<PersonDto>(person);
@@ -67,7 +67,7 @@ public class PersonManager : IPersonManager
         return mapper.Map<PersonDto>(addedPerson);
     }
 
-    public void DeletePerson(uint personId)
+    public void DeletePerson(ulong personId)
     {
         HidePerson(personId);
     }
@@ -76,7 +76,7 @@ public class PersonManager : IPersonManager
     /// Hides a person rather than deleting it to maintain referential integrity.
     /// </summary>
     /// <returns>The hidden person or null if not found</returns>
-    private Person? HidePerson(uint personId)
+    private Person? HidePerson(ulong personId)
     {
         Person? person = personRepository.FindById(personId);
 
