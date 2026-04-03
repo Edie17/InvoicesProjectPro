@@ -29,8 +29,13 @@ namespace Invoices.Api.Interfaces;
 /// </summary>
 public interface IPersonManager
 {
+    /// <summary>Gets all visible (non-hidden) persons.</summary>
     IList<PersonDto> GetAllPersons();
+
+    /// <summary>Creates and persists a new person.</summary>
     PersonDto AddPerson(PersonDto personDto);
+
+    /// <summary>Soft-deletes a person by hiding them.</summary>
     void DeletePerson(ulong personId);
 
     /// <summary>

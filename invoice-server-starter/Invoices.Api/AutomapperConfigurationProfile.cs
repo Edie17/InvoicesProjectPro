@@ -26,8 +26,15 @@ using Invoices.Data.Models;
 
 namespace Invoices.Api;
 
+/// <summary>
+/// AutoMapper profile that configures bidirectional mappings
+/// between database entities and their corresponding DTOs.
+/// </summary>
 public class AutomapperConfigurationProfile : Profile
 {
+    /// <summary>
+    /// Registers all entity-to-DTO and DTO-to-entity mappings.
+    /// </summary>
     public AutomapperConfigurationProfile()
     {
         CreateMap<Person, PersonDto>();

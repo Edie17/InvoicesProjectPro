@@ -22,7 +22,14 @@
 
 namespace Invoices.Data.Models;
 
+/// <summary>
+/// Represents the country of a person or company.
+/// </summary>
 public enum Country
 {
-    CZECHIA, SLOVAKIA
+    /// <summary>Czech Republic.</summary>
+    CZECHIA,
+
+    /// <summary>Slovakia.</summary>
+    SLOVAKIA
 }

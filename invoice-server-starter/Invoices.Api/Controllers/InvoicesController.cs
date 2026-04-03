@@ -14,6 +14,10 @@ namespace Invoices.Api.Controllers
     {
         private readonly IInvoiceManager invoiceManager;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="InvoicesController"/>.
+        /// </summary>
+        /// <param name="invoiceManager">Invoice manager service</param>
         public InvoicesController(IInvoiceManager invoiceManager)
         {
             this.invoiceManager = invoiceManager;
@@ -93,6 +97,10 @@ namespace Invoices.Api.Controllers
             return Ok(updatedInvoice);
         }
 
+        /// <summary>
+        /// Deletes an invoice by ID.
+        /// </summary>
+        /// <returns>204 No Content</returns>
         [HttpDelete("invoices/{id}")]
         public IActionResult DeleteInvoice(ulong id)
         {
@@ -100,6 +108,10 @@ namespace Invoices.Api.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Gets all invoices associated with the given person (as buyer or seller).
+        /// </summary>
+        /// <returns>List of invoices for the person</returns>
         [HttpGet("persons/{personId}/invoices")]
         public IActionResult GetPersonInvoices(ulong personId)
         {

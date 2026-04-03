@@ -7,6 +7,7 @@ namespace Invoices.Api.Interfaces
     /// </summary>
     public interface IInvoiceManager
     {
+        /// <summary>Creates and persists a new invoice.</summary>
         InvoiceDto AddInvoice(InvoiceDto invoiceDto);
 
         /// <summary>
@@ -42,9 +43,16 @@ namespace Invoices.Api.Interfaces
         /// <returns>The updated invoice or null if not found</returns>
         InvoiceDto? UpdateInvoice(ulong id, InvoiceDto invoiceDto);
 
+        /// <summary>Permanently deletes an invoice by ID.</summary>
         void DeleteInvoice(ulong id);
+
+        /// <summary>Gets all invoices where the person is buyer or seller.</summary>
         IEnumerable<InvoiceDto> GetInvoicesByPerson(ulong personId);
+
+        /// <summary>Gets overall invoice statistics for the system.</summary>
         StatisticsDto GetStatistics();
+
+        /// <summary>Gets invoice statistics for a specific person.</summary>
         PersonStatisticsDto GetPersonStatistics(ulong personId);
 
         /// <summary>

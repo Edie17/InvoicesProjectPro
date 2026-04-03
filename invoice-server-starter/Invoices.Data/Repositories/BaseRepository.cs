@@ -35,17 +35,22 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     protected readonly InvoicesDbContext invoicesDbContext;
     protected readonly DbSet<TEntity> dbSet;
 
+    /// <summary>
+    /// Initializes the repository with the given DbContext.
+    /// </summary>
     public BaseRepository(InvoicesDbContext invoicesDbContext)
     {
         this.invoicesDbContext = invoicesDbContext;
         dbSet = invoicesDbContext.Set<TEntity>();
     }
 
+    /// <inheritdoc/>
     public TEntity? FindById(ulong id)
     {
         return dbSet.Find(id);
     }
 
+    /// <inheritdoc/>
     public bool ExistsWithId(ulong id)
     {
         TEntity? entity = dbSet.Find(id);
@@ -54,11 +59,13 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return entity is not null;
     }
 
+    /// <inheritdoc/>
     public IList<TEntity> GetAll()
     {
         return dbSet.ToList();
     }
 
+    /// <inheritdoc/>
     public TEntity Insert(TEntity entity)
     {
         EntityEntry<TEntity> entityEntry = dbSet.Add(entity);
@@ -66,6 +73,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return entityEntry.Entity;
     }
 
+    /// <inheritdoc/>
     public TEntity Update(TEntity entity)
     {
         EntityEntry<TEntity> entityEntry = dbSet.Update(entity);
@@ -73,6 +81,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return entityEntry.Entity;
     }
 
+    /// <inheritdoc/>
     public void Delete(ulong id)
     {
         TEntity? entity = dbSet.Find(id);

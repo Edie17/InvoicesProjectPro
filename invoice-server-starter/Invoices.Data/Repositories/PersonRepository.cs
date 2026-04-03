@@ -34,6 +34,7 @@ public class PersonRepository : BaseRepository<Person>, IPersonRepository
     {
     }
 
+    /// <inheritdoc/>
     public IList<Person> GetAllByHidden(bool hidden)
     {
         return dbSet
@@ -41,6 +42,7 @@ public class PersonRepository : BaseRepository<Person>, IPersonRepository
             .ToList();
     }
 
+    /// <inheritdoc/>
     public Person? Select(ulong id)
     {
         return invoicesDbContext.Persons?.FirstOrDefault(p => p.PersonId == id && !p.Hidden);

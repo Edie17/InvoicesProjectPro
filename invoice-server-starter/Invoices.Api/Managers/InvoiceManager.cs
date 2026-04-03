@@ -20,6 +20,9 @@ namespace Invoices.Api.Managers
         private readonly IMapper mapper;
         private readonly InvoicesDbContext invoicesDbContext;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="InvoiceManager"/>.
+        /// </summary>
         public InvoiceManager(IInvoiceRepository invoiceRepository, IMapper mapper, IPersonRepository personRepository, InvoicesDbContext invoicesDbContext)
         {
             this.invoiceRepository = invoiceRepository;
@@ -28,6 +31,10 @@ namespace Invoices.Api.Managers
             this.invoicesDbContext = invoicesDbContext;
         }
 
+        /// <summary>
+        /// Creates and persists a new invoice.
+        /// Buyer and seller are resolved from the repository after insertion.
+        /// </summary>
         public InvoiceDto AddInvoice(InvoiceDto invoiceDto)
         {
             Invoice invoice = mapper.Map<Invoice>(invoiceDto);
@@ -94,12 +101,21 @@ namespace Invoices.Api.Managers
             return mapper.Map<IEnumerable<InvoiceDto>>(query.ToList());
         }
 
+        /// <summary>
+        /// Gets a single invoice by its ID.
+        /// </summary>
+        /// <returns>The invoice DTO or null if not found</returns>
         public InvoiceDto? GetInvoice(ulong id)
         {
             Invoice? invoice = invoiceRepository.FindById(id);
             return invoice != null ? mapper.Map<InvoiceDto>(invoice) : null;
         }
 
+        /// <summary>
+        /// Updates an existing invoice. Detaches the old entity from the context
+        /// before applying the new data to avoid tracking conflicts.
+        /// </summary>
+        /// <returns>The updated invoice DTO or null if not found</returns>
         public InvoiceDto? UpdateInvoice(ulong id, InvoiceDto invoiceDto)
         {
             var existingInvoice = invoiceRepository.FindById(id);
@@ -167,6 +183,11 @@ namespace Invoices.Api.Managers
             return mapper.Map<IEnumerable<InvoiceDto>>(invoices);
         }
 
+        /// <summary>
+        /// Calculates total invoice amounts (both as buyer and seller) grouped by person ID.
+        /// </summary>
+        /// <param name="personIds">Collection of person IDs to include</param>
+        /// <returns>Dictionary mapping each person ID to their total revenue</returns>
         public IDictionary<ulong, decimal> GetRevenueByPersonIds(IEnumerable<ulong> personIds)
         {
             var idSet = new HashSet<ulong>(personIds);
@@ -183,11 +204,18 @@ namespace Invoices.Api.Managers
             return result;
         }
 
+        /// <summary>
+        /// Permanently deletes an invoice by ID.
+        /// </summary>
         public void DeleteInvoice(ulong id)
         {
             invoiceRepository.Delete(id);
         }
 
+        /// <summary>
+        /// Gets all invoices where the given person is either the buyer or the seller.
+        /// Returns an empty list if the person does not exist.
+        /// </summary>
         public IEnumerable<InvoiceDto> GetInvoicesByPerson(ulong personId)
         {
             var person = personRepository.FindById(personId);
@@ -218,6 +246,10 @@ namespace Invoices.Api.Managers
             };
         }
 
+        /// <summary>
+        /// Gets invoice statistics for a specific person (total count and total amount).
+        /// Returns an empty DTO if the person does not exist.
+        /// </summary>
         public PersonStatisticsDto GetPersonStatistics(ulong personId)
         {
             var person = personRepository.FindById(personId);

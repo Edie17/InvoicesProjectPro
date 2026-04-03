@@ -37,12 +37,21 @@ public class PersonsController : ControllerBase
     private readonly IPersonManager personManager;
     private readonly IInvoiceManager invoiceManager;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="PersonsController"/>.
+    /// </summary>
+    /// <param name="personManager">Person manager service</param>
+    /// <param name="invoiceManager">Invoice manager service</param>
     public PersonsController(IPersonManager personManager, IInvoiceManager invoiceManager)
     {
         this.personManager = personManager;
         this.invoiceManager = invoiceManager;
     }
 
+    /// <summary>
+    /// Gets all visible (non-hidden) persons.
+    /// </summary>
+    /// <returns>List of all active persons</returns>
     [HttpGet("persons")]
     public IEnumerable<PersonDto> GetPersons()
     {
@@ -75,6 +84,10 @@ public class PersonsController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, createdPerson);
     }
 
+    /// <summary>
+    /// Soft-deletes a person by hiding them rather than removing from the database.
+    /// </summary>
+    /// <returns>204 No Content</returns>
     [HttpDelete("persons/{personId}")]
     public IActionResult DeletePerson(ulong personId)
     {

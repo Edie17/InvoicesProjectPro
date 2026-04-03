@@ -8,6 +8,11 @@ namespace Invoices.Api;
 /// </summary>
 public static class DatabaseSeeder
 {
+    /// <summary>
+    /// Seeds the database with sample persons and invoices.
+    /// Does nothing if both persons and invoices already exist.
+    /// </summary>
+    /// <param name="context">Database context to seed</param>
     public static void Seed(InvoicesDbContext context)
     {
         bool hasPersons = context.Persons != null && context.Persons.Any();
@@ -65,7 +70,7 @@ public static class DatabaseSeeder
                 Street = "Hlavní třída 10",
                 Zip = "70200",
                 City = "Ostrava",
-                Note = "VIP klient",
+                Note = "VIP client",
                 Country = Country.CZECHIA,
                 Hidden = false
             },
@@ -99,7 +104,7 @@ public static class DatabaseSeeder
                 Street = "Obchodná 15",
                 Zip = "81106",
                 City = "Bratislava",
-                Note = "Slovenský partner",
+                Note = "Slovak partner",
                 Country = Country.SLOVAKIA,
                 Hidden = false
             }
@@ -115,10 +120,10 @@ public static class DatabaseSeeder
                 InvoiceNumber = 2024001,
                 Issued = new DateTime(2024, 1, 10),
                 DueDate = new DateTime(2024, 1, 24),
-                Product = "Vývoj webové aplikace",
+                Product = "Web application development",
                 Price = 85000,
                 Vat = 21,
-                Note = "Dle smlouvy č. 2024/001",
+                Note = "As per contract no. 2024/001",
                 SellerId = persons[0].PersonId,
                 BuyerId = persons[1].PersonId
             },
@@ -127,7 +132,7 @@ public static class DatabaseSeeder
                 InvoiceNumber = 2024002,
                 Issued = new DateTime(2024, 2, 5),
                 DueDate = new DateTime(2024, 2, 19),
-                Product = "IT konzultace",
+                Product = "IT consulting",
                 Price = 32000,
                 Vat = 21,
                 Note = "",
@@ -139,10 +144,10 @@ public static class DatabaseSeeder
                 InvoiceNumber = 2024003,
                 Issued = new DateTime(2024, 3, 1),
                 DueDate = new DateTime(2024, 3, 15),
-                Product = "Správa serverů – Q1",
+                Product = "Server management – Q1",
                 Price = 18500,
                 Vat = 21,
-                Note = "Měsíční paušál",
+                Note = "Monthly flat rate",
                 SellerId = persons[1].PersonId,
                 BuyerId = persons[3].PersonId
             },
@@ -151,10 +156,10 @@ public static class DatabaseSeeder
                 InvoiceNumber = 2024004,
                 Issued = new DateTime(2024, 4, 12),
                 DueDate = new DateTime(2024, 4, 26),
-                Product = "Dodávka hardware",
+                Product = "Hardware supply",
                 Price = 142000,
                 Vat = 21,
-                Note = "Faktura za notebooky a periférie",
+                Note = "Invoice for laptops and peripherals",
                 SellerId = persons[3].PersonId,
                 BuyerId = persons[2].PersonId
             },
@@ -163,7 +168,7 @@ public static class DatabaseSeeder
                 InvoiceNumber = 2024005,
                 Issued = new DateTime(2024, 5, 20),
                 DueDate = new DateTime(2024, 6, 3),
-                Product = "Marketingová kampaň",
+                Product = "Marketing campaign",
                 Price = 55000,
                 Vat = 21,
                 Note = "",
@@ -175,10 +180,10 @@ public static class DatabaseSeeder
                 InvoiceNumber = 2024006,
                 Issued = new DateTime(2024, 6, 8),
                 DueDate = new DateTime(2024, 6, 22),
-                Product = "SEO optimalizace",
+                Product = "SEO optimization",
                 Price = 28000,
                 Vat = 21,
-                Note = "3 měsíce práce",
+                Note = "3 months of work",
                 SellerId = persons[2].PersonId,
                 BuyerId = persons[4].PersonId
             },
@@ -187,10 +192,10 @@ public static class DatabaseSeeder
                 InvoiceNumber = 2024007,
                 Issued = new DateTime(2024, 8, 14),
                 DueDate = new DateTime(2024, 8, 28),
-                Product = "Vývoj mobilní aplikace",
+                Product = "Mobile application development",
                 Price = 210000,
                 Vat = 21,
-                Note = "Milestone 1 - design a prototyp",
+                Note = "Milestone 1 - design and prototype",
                 SellerId = persons[1].PersonId,
                 BuyerId = persons[0].PersonId
             },
@@ -199,10 +204,10 @@ public static class DatabaseSeeder
                 InvoiceNumber = 2024008,
                 Issued = new DateTime(2024, 10, 3),
                 DueDate = new DateTime(2024, 10, 17),
-                Product = "Cloudové služby – Q3",
+                Product = "Cloud services – Q3",
                 Price = 9900,
                 Vat = 21,
-                Note = "AWS provoz",
+                Note = "AWS operations",
                 SellerId = persons[0].PersonId,
                 BuyerId = persons[3].PersonId
             },
@@ -211,10 +216,10 @@ public static class DatabaseSeeder
                 InvoiceNumber = 2025001,
                 Issued = new DateTime(2025, 1, 7),
                 DueDate = new DateTime(2025, 1, 21),
-                Product = "Roční podpora a maintenance",
+                Product = "Annual support and maintenance",
                 Price = 48000,
                 Vat = 21,
-                Note = "SLA smlouva 2025",
+                Note = "SLA contract 2025",
                 SellerId = persons[2].PersonId,
                 BuyerId = persons[1].PersonId
             },
@@ -223,10 +228,10 @@ public static class DatabaseSeeder
                 InvoiceNumber = 2025002,
                 Issued = new DateTime(2025, 3, 15),
                 DueDate = new DateTime(2025, 3, 29),
-                Product = "Školení zaměstnanců",
+                Product = "Employee training",
                 Price = 22000,
                 Vat = 21,
-                Note = "2 dny, 10 účastníků",
+                Note = "2 days, 10 participants",
                 SellerId = persons[4].PersonId,
                 BuyerId = persons[2].PersonId
             }

@@ -36,18 +36,28 @@ public class PersonManager : IPersonManager
     private readonly IPersonRepository personRepository;
     private readonly IMapper mapper;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="PersonManager"/>.
+    /// </summary>
     public PersonManager(IPersonRepository personRepository, IMapper mapper)
     {
         this.personRepository = personRepository;
         this.mapper = mapper;
     }
 
+    /// <summary>
+    /// Gets all visible (non-hidden) persons.
+    /// </summary>
     public IList<PersonDto> GetAllPersons()
     {
         IList<Person> persons = personRepository.GetAllByHidden(false);
         return mapper.Map<IList<PersonDto>>(persons);
     }
 
+    /// <summary>
+    /// Gets a single visible person by ID.
+    /// </summary>
+    /// <returns>The person DTO or null if not found or hidden</returns>
     public PersonDto? GetPerson(ulong personId)
     {
         Person? person = personRepository.FindById(personId);
@@ -58,6 +68,9 @@ public class PersonManager : IPersonManager
         return mapper.Map<PersonDto>(person);
     }
 
+    /// <summary>
+    /// Creates and persists a new person. The ID is reset to ensure a new record is created.
+    /// </summary>
     public PersonDto AddPerson(PersonDto personDto)
     {
         Person person = mapper.Map<Person>(personDto);
@@ -67,6 +80,10 @@ public class PersonManager : IPersonManager
         return mapper.Map<PersonDto>(addedPerson);
     }
 
+    /// <summary>
+    /// Soft-deletes a person by hiding them rather than removing from the database,
+    /// preserving referential integrity for existing invoices.
+    /// </summary>
     public void DeletePerson(ulong personId)
     {
         HidePerson(personId);
